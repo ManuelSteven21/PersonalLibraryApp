@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Personal Library App</string>
+    <string name="add_movie">Add Movie</string>
+    <string name="view_movies">View Movies</string>
+    <string name="creator_info">Creator: Steven</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
