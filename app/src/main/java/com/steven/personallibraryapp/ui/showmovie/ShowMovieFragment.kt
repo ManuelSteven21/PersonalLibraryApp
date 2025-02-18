@@ -40,12 +40,19 @@ class ShowMovieFragment : Fragment() {
         // Obtenemos el objeto Movie del Bundle
         val movie: Movie? = arguments?.getParcelable("movie")
 
-        movie?.let { movie ->
-            binding.tvTitle.text = movie.title
-            binding.tvDirector.text = "Director: ${movie.director}"
-            binding.tvYear.text = "Year: ${movie.year}"
-            binding.tvRating.text = "Rating: ${movie.rating}"
+        viewModel.allMovies.observe(viewLifecycleOwner) { movies ->
+            movie?.let { movie ->
+                val updatedMovie = movies.find { it.id == movie.id }
+                if (updatedMovie != null) {
+                    binding.tvTitle.text = updatedMovie.title
+                    binding.tvDirector.text = "Director: ${updatedMovie.director}"
+                    binding.tvYear.text = "Year: ${updatedMovie.year}"
+                    binding.tvRating.text = "Rating: ${updatedMovie.rating}"
+                }
+            }
+        }
 
+        movie?.let { movie ->
             binding.btnEditMovie.setOnClickListener {
                 val bundle = Bundle().apply {
                     putParcelable("movie", movie)

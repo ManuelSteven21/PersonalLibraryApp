@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.steven.personallibraryapp.data.Movie
 import com.steven.personallibraryapp.viewmodel.MovieViewModel
@@ -14,6 +15,7 @@ import com.steven.personallibraryapp.viewmodel.MovieViewModelFactory
 import com.steven.personallibraryapp.MainActivity
 import com.steven.personallibraryapp.R
 import com.steven.personallibraryapp.databinding.FragmentAddMovieBinding
+import kotlinx.coroutines.launch
 
 class AddMovieFragment : Fragment() {
 
@@ -43,7 +45,10 @@ class AddMovieFragment : Fragment() {
             binding.etDirector.setText(movie.director)
             binding.etYear.setText(movie.year.toString())
             binding.etRating.setText(movie.rating.toString())
-            binding.btnDelete.visibility = View.VISIBLE
+            binding.btnCancel.text = "Cancel"
+            (activity as MainActivity).supportActionBar?.title = "Edit Film" // Ajustar el título dinámicamente
+        } else {
+            (activity as MainActivity).supportActionBar?.title = "Add Film"
         }
 
         binding.btnSave.setOnClickListener {
@@ -55,22 +60,22 @@ class AddMovieFragment : Fragment() {
             if (title.isNotEmpty() && director.isNotEmpty() && year > 0) {
                 val updatedMovie = movie?.copy(title = title, director = director, year = year, rating = rating)
                     ?: Movie(title = title, director = director, year = year, rating = rating)
-                if (movie == null) {
-                    viewModel.insert(updatedMovie)
-                } else {
-                    viewModel.update(updatedMovie)
+
+                lifecycleScope.launch {
+                    if (movie == null) {
+                        viewModel.insert(updatedMovie)
+                    } else {
+                        viewModel.update(updatedMovie)
+                    }
+                    findNavController().navigateUp()
                 }
-                findNavController().navigateUp()
             } else {
                 Toast.makeText(requireContext(), "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
             }
         }
 
-        binding.btnDelete.setOnClickListener {
-            if (movie != null) {
-                viewModel.delete(movie)
-                findNavController().navigateUp()
-            }
+        binding.btnCancel.setOnClickListener {
+            findNavController().navigateUp()
         }
     }
 
